@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model UserModel {
+  userId String @id @default(uuid())
+
+  username String
+
+  sessions   SessionModel[]
+  franchises FranchiseModel[]
+  logs       LogModel[]
+
+  usedAt    DateTime  @default(now())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model SessionModel {
+  sessionId String  @id
+  platform  String?
+
+  userId String
+  user   UserModel @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+enum LogType {
+  START
+  STOP
+
+  LOCK
+  UNLOCK
+
+  LIGHTS_ON
+  LIGHTS_OFF
+
+  BUZZER_ON
+  BUZZER_OFF
+
+  ALARM_ON
+  ALARM_OFF
+
+  COLLECTION
+  ERUPTION
+}
+
+model LogModel {
+  logId String @id @default(uuid())
+
+  type          LogType
+  kickboardCode String
+
+  userId String
+  user   UserModel @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model FranchiseModel {
+  franchiseId String      @id
+  users       UserModel[]
+}
