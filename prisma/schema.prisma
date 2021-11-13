@@ -14,9 +14,22 @@ model UserModel {
 
   sessions   SessionModel[]
   franchises FranchiseModel[]
+  logins     PreloginModel[]
   logs       LogModel[]
 
   usedAt    DateTime  @default(now())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model PreloginModel {
+  preloginId String @id
+
+  userId String
+  user   UserModel @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  expiredAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
