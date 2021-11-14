@@ -1,12 +1,24 @@
 import { Router } from 'express';
-import { clusterInfo, getAuthRouter, RESULT, Wrapper } from '..';
+import {
+  clusterInfo,
+  getAuthRouter,
+  getKickboardsRouter,
+  getRegionsRouter,
+  RESULT,
+  UserMiddleware,
+  Wrapper,
+} from '..';
 
 export * from './auth';
+export * from './kickboards';
+export * from './regions';
 
 export function getRouter(): Router {
   const router = Router();
 
   router.use('/auth', getAuthRouter());
+  router.use('/kickboards', UserMiddleware(), getKickboardsRouter());
+  router.use('/regions', UserMiddleware(), getRegionsRouter());
 
   router.get(
     '/',

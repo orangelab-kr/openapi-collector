@@ -4,6 +4,7 @@ import i18n from 'i18n';
 import serverless from 'serverless-http';
 import { getRouter, LoggerMiddleware, RESULT, Wrapper } from '.';
 
+export * from './controllers';
 export * from './middlewares';
 export * from './routes';
 export * from './tools';
