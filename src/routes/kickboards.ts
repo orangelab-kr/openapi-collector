@@ -24,7 +24,7 @@ export function getKickboardsRouter(): Router {
     '/:kickboardCode',
     KickboardDetailsMiddleware(),
     Wrapper(async (req) => {
-      const { kickboard } = req;
+      const kickboard = req.kickboardDetails;
       throw RESULT.SUCCESS({ details: { kickboard } });
     })
   );
