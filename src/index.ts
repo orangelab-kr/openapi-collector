@@ -2,7 +2,13 @@ import cors from 'cors';
 import express from 'express';
 import i18n from 'i18n';
 import serverless from 'serverless-http';
-import { getRouter, LoggerMiddleware, RESULT, Wrapper } from '.';
+import {
+  getRouter,
+  LoggerMiddleware,
+  registerSentry,
+  RESULT,
+  Wrapper,
+} from '.';
 
 export * from './controllers';
 export * from './middlewares';
@@ -10,6 +16,7 @@ export * from './routes';
 export * from './tools';
 
 const app = express();
+registerSentry(app);
 
 app.use(cors());
 app.use(i18n.init);
