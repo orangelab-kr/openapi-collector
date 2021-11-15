@@ -2,12 +2,11 @@ import { Router } from 'express';
 import { InternalKickboardMode } from 'openapi-internal-sdk';
 import {
   Kickboard,
-  KickboardCollect,
-  KickboardMode,
+  KickboardDetailsMiddleware,
+  KickboardMiddleware,
   RESULT,
   Wrapper,
 } from '..';
-import { KickboardMiddleware } from '../middlewares/kickboard';
 
 export function getKickboardsRouter(): Router {
   const router = Router();
@@ -18,6 +17,15 @@ export function getKickboardsRouter(): Router {
       const { query, loggined } = req;
       const kickboards = await Kickboard.getKickboards(loggined.user, query);
       throw RESULT.SUCCESS({ details: { kickboards } });
+    })
+  );
+
+  router.get(
+    '/:kickboardCode',
+    KickboardDetailsMiddleware(),
+    Wrapper(async (req) => {
+      const { kickboard } = req;
+      throw RESULT.SUCCESS({ details: { kickboard } });
     })
   );
 

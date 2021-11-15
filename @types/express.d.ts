@@ -6,6 +6,7 @@ declare global {
   namespace Express {
     interface Request {
       kickboard: InternalKickboard;
+      kickboardDetails: any;
       loggined: {
         sessionId: string;
         user: UserModel;
