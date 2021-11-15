@@ -21,6 +21,14 @@ export function getKickboardsRouter(): Router {
   );
 
   router.get(
+    '/parse',
+    Wrapper(async (req) => {
+      const kickboardCode = await Kickboard.parseKickboardCodeByUrl(req.query);
+      throw RESULT.SUCCESS({ details: { kickboardCode } });
+    })
+  );
+
+  router.get(
     '/:kickboardCode',
     KickboardDetailsMiddleware(),
     Wrapper(async (req) => {

@@ -23,6 +23,8 @@ custom:
   webpack:
     includeModules: true
     packager: 'yarn'
+    packagerOptions:
+      noFrozenLockfile: true
   serverless-offline:
     noPrependStageInUrl: true
 

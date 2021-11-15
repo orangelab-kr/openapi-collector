@@ -1,6 +1,6 @@
 import { UserModel } from '@prisma/client';
-import { InternalKickboard } from 'openapi-internal-sdk';
-import { InternalClient, Joi } from '..';
+import got from 'got';
+import { InternalClient, Joi, RESULT } from '..';
 
 export interface KickboardDoc {
   kickboardId: string;
@@ -116,6 +116,19 @@ export class Kickboard {
 
     // todo: franchise filtering
     await kickboard.start();
+  }
+
+  public static async parseKickboardCodeByUrl(props: {
+    url?: string;
+  }): Promise<string> {
+    const { url } = await Joi.object({
+      url: Joi.string().uri().required(),
+    }).validateAsync(props);
+    const res = await got(url);
+    const { searchParams } = new URL(res.url);
+    const kickboardCode = searchParams.get('code');
+    if (!kickboardCode) throw RESULT.INVALID_KICKBOARD_URL();
+    return kickboardCode;
   }
 
   public static async stopKickboard(
