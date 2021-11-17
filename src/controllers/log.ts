@@ -1,7 +1,17 @@
 import { LogModel, LogType, UserModel, Prisma } from '@prisma/client';
-import { Joi, prisma } from '..';
+import { Joi, prisma, RESULT } from '..';
 
 export class Log {
+  public static async getLog(logId: string): Promise<LogModel | null> {
+    return prisma.logModel.findFirst({ where: { logId } });
+  }
+
+  public static async getLogOrThrow(logId: string): Promise<LogModel> {
+    const log = await Log.getLog(logId);
+    if (!log) throw RESULT.CANNOT_FIND_LOG();
+    return log;
+  }
+
   public static async getLogs(props: {
     take?: number;
     skip?: number;
@@ -9,8 +19,8 @@ export class Log {
     kickboardCode?: string;
     userId?: string;
     type?: string | string[];
-    orderByField: 'createdAt' | 'updatedAt';
-    orderBySort: 'asc' | 'desc';
+    orderByField?: 'createdAt' | 'updatedAt';
+    orderBySort?: 'asc' | 'desc';
   }): Promise<{ total: number; logs: LogModel[] }> {
     const {
       take,
