@@ -1,5 +1,4 @@
-import { LogType } from '.prisma/client';
-import * as Sentry from '@sentry/node';
+import { LogType } from '@prisma/client';
 import { Router } from 'express';
 import { InternalKickboardMode } from 'openapi-internal-sdk';
 import {
