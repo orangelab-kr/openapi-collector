@@ -1,4 +1,5 @@
 import * as JoiLib from 'joi';
+import JoiPhoneNumber from 'joi-phone-number';
 
 const messages = {
   'any.custom':
@@ -152,8 +153,9 @@ const messages = {
   'number.precision':
     '{{#label}}(은) 소수점 이하 {{#limit}}자를 초과할 수 없습니다.',
   'number.unsafe': '{{#label}}(은)는 64비트 부동 소수점 수로 표현해야 합니다.',
+  'phoneNumber.invalid': '{{#label}}(은)는 올바른 전화번호가 아닙니다.',
 };
 
 export const Joi = JoiLib.defaults((schema) =>
   schema.options({ stripUnknown: true, messages })
-);
+).extend(JoiPhoneNumber);

@@ -13,6 +13,7 @@ model UserModel {
   userId String @id @default(uuid())
 
   username String
+  phoneNo  String
 
   sessions   SessionModel[]
   franchises FranchiseModel[]
@@ -20,6 +21,18 @@ model UserModel {
   logs       LogModel[]
 
   usedAt    DateTime  @default(now())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model PhoneModel {
+  phoneId String @id @default(uuid())
+
+  phoneNo String
+  code    String?
+
+  usedAt    DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?

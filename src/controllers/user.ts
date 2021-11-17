@@ -1,4 +1,4 @@
-import { SessionModel, UserModel } from '@prisma/client';
+import { FranchiseModel, SessionModel, UserModel } from '@prisma/client';
 import crypto from 'crypto';
 import { Joi, prisma, RESULT } from '..';
 
@@ -51,5 +51,19 @@ export class User {
     }
 
     return sessionId;
+  }
+
+  public static async getUserByPhoneOrThrow(
+    phoneNo: string
+  ): Promise<UserModel> {
+    const user = await this.getUserByPhone(phoneNo);
+    if (!user) throw RESULT.CANNOT_FIND_USER();
+    return user;
+  }
+
+  public static async getUserByPhone(
+    phoneNo: string
+  ): Promise<UserModel | null> {
+    return prisma.userModel.findFirst({ where: { phoneNo } });
   }
 }
