@@ -9,7 +9,7 @@ declare global {
       kickboardDetails: any;
       loggined: {
         sessionId: string;
-        user: UserModel;
+        user: UserModel & { franchises: FranchiseModel[] };
       };
     }
   }

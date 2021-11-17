@@ -1,4 +1,4 @@
-import { UserModel } from '@prisma/client';
+import { FranchiseModel, UserModel } from '@prisma/client';
 import got from 'got';
 import { InternalClient, Joi, RESULT } from '..';
 
@@ -68,7 +68,7 @@ export enum KickboardCollect {
 
 export class Kickboard {
   public static async getKickboards(
-    user: UserModel,
+    user: UserModel & { franchises: FranchiseModel[] },
     props: {
       lat?: number;
       lng?: number;
@@ -83,39 +83,14 @@ export class Kickboard {
       radius: Joi.number().min(10).max(20000).default(1000).optional(),
     }).validateAsync(props);
 
-    // const { userId } = user;
-    const params = { lat, lng, status, radius };
-    // const franchises = await prisma.franchiseModel.findMany({
-    //   where: { users: { some: { userId } } },
-    // });
-
-    // for (const { franchiseId } of franchises) {
-    //   searchParams.append('franchiseIds', franchiseId);
-    // }
-
+    const franchiseIds = user.franchises.map(({ franchiseId }) => franchiseId);
+    if (franchiseIds.length <= 0) return [];
+    const params = { lat, lng, status, radius, franchiseIds };
     const { kickboards } = await InternalClient.getKickboard()
       .instance.get('/kickboards/near', { params })
       .then((res) => res.data);
 
     return kickboards;
-  }
-
-  public static async startKickboard(
-    user: UserModel,
-    props: {
-      kickboardCode?: string;
-    }
-  ): Promise<void> {
-    const { kickboardCode } = await Joi.object({
-      kickboardCode: Joi.string().length(6).required(),
-    }).validateAsync(props);
-
-    const kickboard = await InternalClient.getKickboard().getKickboard(
-      kickboardCode
-    );
-
-    // todo: franchise filtering
-    await kickboard.start();
   }
 
   public static async parseKickboardCodeByUrl(props: {
@@ -129,23 +104,5 @@ export class Kickboard {
     const kickboardCode = searchParams.get('code');
     if (!kickboardCode) throw RESULT.INVALID_KICKBOARD_URL();
     return kickboardCode;
-  }
-
-  public static async stopKickboard(
-    user: UserModel,
-    props: {
-      kickboardCode?: string;
-    }
-  ): Promise<void> {
-    const { kickboardCode } = await Joi.object({
-      kickboardCode: Joi.string().length(6).required(),
-    }).validateAsync(props);
-
-    const kickboard = await InternalClient.getKickboard().getKickboard(
-      kickboardCode
-    );
-
-    // todo: franchise filtering
-    await kickboard.stop();
   }
 }

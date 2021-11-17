@@ -5,12 +5,18 @@ import { Joi, prisma, RESULT } from '..';
 export class User {
   public static async signupUser(props: {
     username: string;
-  }): Promise<UserModel> {
-    const { username } = await Joi.object({
+  }): Promise<UserModel & { franchises: FranchiseModel[] }> {
+    const { username, phoneNo } = await Joi.object({
       username: Joi.string().required(),
+      phoneNo: Joi.string()
+        .phoneNumber({ defaultCountry: 'KR', format: 'e164' })
+        .required(),
     }).validateAsync(props);
 
-    return prisma.userModel.create({ data: { username } });
+    return prisma.userModel.create({
+      data: { username, phoneNo },
+      include: { franchises: true },
+    });
   }
 
   public static async createSession(
@@ -26,11 +32,13 @@ export class User {
 
   public static async getUserBySessionId(
     sessionId: string
-  ): Promise<UserModel> {
+  ): Promise<UserModel & { franchises: FranchiseModel[] }> {
     try {
       const where = { sessionId };
       const data = { user: { update: { usedAt: new Date() } } };
-      const user = await prisma.sessionModel.update({ where, data }).user();
+      const user = await prisma.sessionModel
+        .update({ where, data })
+        .user({ include: { franchises: true } });
       if (!user) throw Error();
 
       return user;
