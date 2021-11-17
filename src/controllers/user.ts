@@ -1,22 +1,144 @@
-import { FranchiseModel, SessionModel, UserModel } from '@prisma/client';
+import {
+  FranchiseModel,
+  SessionModel,
+  UserModel,
+  Prisma,
+} from '@prisma/client';
 import crypto from 'crypto';
 import { Joi, prisma, RESULT } from '..';
 
 export class User {
-  public static async signupUser(props: {
+  public static async getUser(
+    userId: string
+  ): Promise<(UserModel & { franchises: FranchiseModel[] }) | null> {
+    return prisma.userModel.findFirst({
+      where: { userId },
+      include: { franchises: true },
+    });
+  }
+
+  public static async getUserOrThrow(
+    userId: string
+  ): Promise<UserModel & { franchises: FranchiseModel[] }> {
+    const user = await User.getUser(userId);
+    if (!user) throw RESULT.CANNOT_FIND_USER();
+    return user;
+  }
+
+  public static async getUsers(props: {
+    take?: number;
+    skip?: number;
+    search?: string;
+    userId?: string;
+    phoneNo?: string;
+    orderByField?: 'username' | 'usedAt' | 'createdAt';
+    orderBySort?: 'asc' | 'desc';
+  }): Promise<{
+    total: number;
+    users: (UserModel & { franchises: FranchiseModel[] })[];
+  }> {
+    const { take, skip, search, userId, phoneNo, orderByField, orderBySort } =
+      await Joi.object({
+        take: Joi.number().default(10).optional(),
+        skip: Joi.number().default(0).optional(),
+        search: Joi.string().optional(),
+        userId: Joi.array().items(Joi.string().uuid()).single().optional(),
+        phoneNo: Joi.array()
+          .single()
+          .optional()
+          .items(
+            Joi.string().phoneNumber({
+              defaultCountry: 'KR',
+              format: 'e164',
+            })
+          ),
+        orderByField: Joi.string()
+          .valid('username', 'usedAt', 'createdAt', 'updatedAt')
+          .default('createdAt')
+          .optional(),
+        orderBySort: Joi.string()
+          .valid('asc', 'desc')
+          .default('desc')
+          .optional(),
+      }).validateAsync(props);
+    const where: Prisma.UserModelWhereInput = {};
+    const include: Prisma.UserModelInclude = { franchises: true };
+    const orderBy = { [orderByField]: orderBySort };
+    if (search) {
+      where.OR = [
+        { userId: { contains: search } },
+        { username: { contains: search } },
+        { phoneNo: { contains: search } },
+      ];
+    }
+
+    if (userId) where.userId = { in: userId };
+    if (phoneNo) where.phoneNo = { in: phoneNo };
+    const [total, users]: [number, any] = await prisma.$transaction([
+      prisma.userModel.count({ where }),
+      prisma.userModel.findMany({ take, skip, where, orderBy, include }),
+    ]);
+
+    return { total, users };
+  }
+
+  public static async createUser(props: {
     username: string;
+    phoneNo: string;
+    franchiseIds: string[];
   }): Promise<UserModel & { franchises: FranchiseModel[] }> {
-    const { username, phoneNo } = await Joi.object({
+    const { username, phoneNo, franchiseIds } = await Joi.object({
       username: Joi.string().required(),
       phoneNo: Joi.string()
         .phoneNumber({ defaultCountry: 'KR', format: 'e164' })
         .required(),
+      franchiseIds: Joi.array()
+        .items(Joi.string().uuid())
+        .default([])
+        .optional(),
     }).validateAsync(props);
-
     return prisma.userModel.create({
-      data: { username, phoneNo },
+      data: { username, phoneNo, franchises: { create: franchiseIds } },
       include: { franchises: true },
     });
+  }
+
+  public static async modifyUser(
+    user: UserModel,
+    props: {
+      username?: string;
+      phoneNo?: string;
+      franchiseIds?: string[];
+    }
+  ): Promise<UserModel & { franchises: FranchiseModel[] }> {
+    const { userId } = user;
+    const { username, phoneNo, franchiseIds } = await Joi.object({
+      username: Joi.string().optional(),
+      phoneNo: Joi.string()
+        .phoneNumber({ defaultCountry: 'KR', format: 'e164' })
+        .optional(),
+      franchiseIds: Joi.array()
+        .items(Joi.string().uuid())
+        .default([])
+        .optional(),
+    }).validateAsync(props);
+    return prisma.userModel.update({
+      where: { userId },
+      include: { franchises: true },
+      data: {
+        username,
+        phoneNo,
+        franchises: {
+          create: franchiseIds,
+          deleteMany: {},
+        },
+      },
+    });
+  }
+
+  public static async deleteUser(user: UserModel): Promise<void> {
+    const { userId } = user;
+    await prisma.userModel.delete({ where: { userId } });
   }
 
   public static async createSession(

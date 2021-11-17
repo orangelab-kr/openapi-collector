@@ -156,6 +156,6 @@ const messages = {
   'phoneNumber.invalid': '{{#label}}(은)는 올바른 전화번호가 아닙니다.',
 };
 
-export const Joi = JoiLib.defaults((schema) =>
+export const Joi: JoiLib.Root = JoiLib.defaults((schema) =>
   schema.options({ stripUnknown: true, messages })
 ).extend(JoiPhoneNumber);
