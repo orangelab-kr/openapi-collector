@@ -100,7 +100,8 @@ model LogModel {
 }
 
 model FranchiseModel {
-  franchiseId String @id
-
+  franchiseId String
   users UserModel[]
+
+  relationId String @id @default(uuid())
 }
