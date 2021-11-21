@@ -97,8 +97,12 @@ export class User {
         .default([])
         .optional(),
     }).validateAsync(props);
+    const franchises = franchiseIds.map((franchiseId: string) => ({
+      franchiseId,
+    }));
+
     return prisma.userModel.create({
-      data: { username, phoneNo, franchises: { create: franchiseIds } },
+      data: { username, phoneNo, franchises: { create: franchises } },
       include: { franchises: true },
     });
   }
@@ -122,6 +126,10 @@ export class User {
         .default([])
         .optional(),
     }).validateAsync(props);
+    const franchises = franchiseIds.map((franchiseId: string) => ({
+      franchiseId,
+    }));
+
     return prisma.userModel.update({
       where: { userId },
       include: { franchises: true },
@@ -129,8 +137,8 @@ export class User {
         username,
         phoneNo,
         franchises: {
-          create: franchiseIds,
           deleteMany: {},
+          create: franchises,
         },
       },
     });
