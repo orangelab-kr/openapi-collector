@@ -80,7 +80,7 @@ export class Kickboard {
       lat: Joi.number().min(-90).max(90).required(),
       lng: Joi.number().min(-180).max(180).required(),
       status: Joi.array().items(Joi.number()).optional(),
-      radius: Joi.number().min(10).max(20000).default(1000).optional(),
+      radius: Joi.number().min(10).max(400000).default(1000).optional(),
     }).validateAsync(props);
 
     const franchiseIds = user.franchises.map(({ franchiseId }) => franchiseId);
