@@ -253,5 +253,22 @@ export function getKickboardsRouter(): Router {
     })
   );
 
+  router.get(
+    '/:kickboardCode/reboot',
+    KickboardMiddleware(),
+    Wrapper(async (req) => {
+      const type = LogType.REBOOT;
+      const { kickboard, loggined } = req;
+      const { kickboardCode } = kickboard;
+      await kickboard.reboot();
+      await Log.createLog(loggined.user, {
+        type,
+        kickboardCode,
+      });
+
+      throw RESULT.SUCCESS();
+    })
+  );
+
   return router;
 }

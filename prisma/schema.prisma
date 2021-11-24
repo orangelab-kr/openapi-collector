@@ -65,6 +65,7 @@ model SessionModel {
 enum LogType {
   START
   STOP
+  REBOOT
 
   LOCK
   UNLOCK
