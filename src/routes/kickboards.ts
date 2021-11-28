@@ -39,6 +39,15 @@ export function getKickboardsRouter(): Router {
     })
   );
 
+  router.post(
+    '/:kickboardCode',
+    KickboardMiddleware(),
+    Wrapper(async (req) => {
+      await req.kickboard.update(req.body);
+      throw RESULT.SUCCESS();
+    })
+  );
+
   router.get(
     '/:kickboardCode/start',
     KickboardMiddleware(),
