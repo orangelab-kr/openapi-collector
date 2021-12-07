@@ -6,6 +6,14 @@ export function getRegionsRouter(): Router {
 
   router.get(
     '/',
+    Wrapper(async () => {
+      const regions = await Region.getRegions();
+      throw RESULT.SUCCESS({ details: { regions } });
+    })
+  );
+
+  router.get(
+    '/all',
     Wrapper(async (req) => {
       const regions = await Region.getAllRegions(req.query);
       throw RESULT.SUCCESS({ details: { regions } });
