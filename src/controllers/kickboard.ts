@@ -70,24 +70,21 @@ export class Kickboard {
   public static async getKickboards(
     user: UserModel & { franchises: FranchiseModel[] },
     props: {
-      lat?: number;
-      lng?: number;
+      take?: number;
+      skip?: number;
       status?: number[];
-      radius?: number;
     }
   ): Promise<KickboardDoc[]> {
-    const { lat, lng, status, radius } = await Joi.object({
-      lat: Joi.number().min(-90).max(90).required(),
-      lng: Joi.number().min(-180).max(180).required(),
+    const { skip, take, status } = await Joi.object({
+      take: Joi.number().default(10).optional(),
+      skip: Joi.number().default(0).optional(),
       status: Joi.array().items(Joi.number()).optional(),
-      radius: Joi.number().min(10).max(400000).default(1000).optional(),
     }).validateAsync(props);
-
     const franchiseIds = user.franchises.map(({ franchiseId }) => franchiseId);
     if (franchiseIds.length <= 0) return [];
-    const params = { lat, lng, status, radius, franchiseIds };
+    const params = { take, skip, status, franchiseIds };
     const { kickboards } = await InternalClient.getKickboard()
-      .instance.get('/kickboards/near', { params })
+      .instance.get('/kickboards', { params })
       .then((res) => res.data);
 
     return kickboards;
