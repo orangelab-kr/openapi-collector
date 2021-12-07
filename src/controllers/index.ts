@@ -1,3 +1,4 @@
+export * from './franchise';
 export * from './kickboard';
 export * from './log';
 export * from './phone';
