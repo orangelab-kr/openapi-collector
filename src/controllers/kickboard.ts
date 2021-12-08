@@ -78,7 +78,7 @@ export class Kickboard {
     const { skip, take, status } = await Joi.object({
       take: Joi.number().default(10).optional(),
       skip: Joi.number().default(0).optional(),
-      status: Joi.array().items(Joi.number()).optional(),
+      status: Joi.boolean().default(false).optional(),
     }).validateAsync(props);
     const franchiseIds = user.franchises.map(({ franchiseId }) => franchiseId);
     if (franchiseIds.length <= 0) return { kickboards: [], total: 0 };
