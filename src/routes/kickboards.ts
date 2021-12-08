@@ -17,8 +17,12 @@ export function getKickboardsRouter(): Router {
     '/',
     Wrapper(async (req) => {
       const { query, loggined } = req;
-      const kickboards = await Kickboard.getKickboards(loggined.user, query);
-      throw RESULT.SUCCESS({ details: { kickboards } });
+      const { kickboards, total } = await Kickboard.getKickboards(
+        loggined.user,
+        query
+      );
+
+      throw RESULT.SUCCESS({ details: { kickboards, total } });
     })
   );
 

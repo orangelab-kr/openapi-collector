@@ -74,20 +74,20 @@ export class Kickboard {
       skip?: number;
       status?: number[];
     }
-  ): Promise<KickboardDoc[]> {
+  ): Promise<{ kickboards: KickboardDoc[]; total: number }> {
     const { skip, take, status } = await Joi.object({
       take: Joi.number().default(10).optional(),
       skip: Joi.number().default(0).optional(),
       status: Joi.array().items(Joi.number()).optional(),
     }).validateAsync(props);
     const franchiseIds = user.franchises.map(({ franchiseId }) => franchiseId);
-    if (franchiseIds.length <= 0) return [];
+    if (franchiseIds.length <= 0) return { kickboards: [], total: 0 };
     const params = { take, skip, status, franchiseIds };
-    const { kickboards } = await InternalClient.getKickboard()
+    const { kickboards, total } = await InternalClient.getKickboard()
       .instance.get('/kickboards', { params })
       .then((res) => res.data);
 
-    return kickboards;
+    return { kickboards, total };
   }
 
   public static async parseKickboardCodeByUrl(props: {
