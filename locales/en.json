@@ -5,5 +5,13 @@
   "REQUIRED_LOGIN": "This service requires a login.",
   "INVALID_ERROR": "An unknown error has occurred.",
   "FAILED_VALIDATE": "Please enter the correct information.",
-  "INVALID_API": "Invalid API address."
+  "INVALID_API": "Invalid API address.",
+  "CANNOT_FIND_PRELOGIN": "Unable to proceed with camera login.",
+  "CANNOT_FIND_KICKBOARD": "Kickboard not found.",
+  "INVALID_KICKBOARD_URL": "Unresolvable kickboard URL.",
+  "ALREADY_REGISTERED_USER": "You are already a registered user.",
+  "INVALID_PHONE_VALIDATE_CODE": "Invalid verification code.",
+  "RETRY_PHONE_VALIDATE": "Request the verification code again.",
+  "CANNOT_FIND_USER": "User not found.",
+  "CANNOT_FIND_LOG": "No log records found."
 }

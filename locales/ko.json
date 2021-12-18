@@ -4,5 +4,13 @@
   "PERMISSION_DENIED": "권한이 없습니다. (%s)",
   "INVALID_ERROR": "알 수 없는 오류가 발생하였습니다.",
   "FAILED_VALIDATE": "올바른 정보를 입력해주세요.",
-  "INVALID_API": "잘못된 API 주소입니다."
+  "INVALID_API": "잘못된 API 주소입니다.",
+  "CANNOT_FIND_PRELOGIN": "카메라 로그인을 진행할 수 없습니다.",
+  "CANNOT_FIND_KICKBOARD": "킥보드를 찾을 수 없습니다.",
+  "INVALID_KICKBOARD_URL": "해석할 수 없는 킥보드 URL입니다.",
+  "ALREADY_REGISTERED_USER": "이미 등록된 사용자입니다.",
+  "INVALID_PHONE_VALIDATE_CODE": "잘못된 인증번호입니다.",
+  "RETRY_PHONE_VALIDATE": "인증번호를 다시 요청하세요.",
+  "CANNOT_FIND_USER": "사용자를 찾을 수 없습니다.",
+  "CANNOT_FIND_LOG": "로그 기록을 찾을 수 없습니다."
 }
