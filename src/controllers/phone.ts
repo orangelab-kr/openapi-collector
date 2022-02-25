@@ -10,16 +10,16 @@ export class Phone {
         .phoneNumber({ defaultCountry: 'KR', format: 'e164' })
         .required(),
     }).validateAsync(props);
-    const code = Phone.generateRandomCode();
+    const verifyCode = Phone.generateRandomCode();
     await Phone.revokePhone(phoneNo);
     await sendMessageWithMessageGateway({
       name: 'collector_verify',
       phone: phoneNo,
-      fields: { code },
+      fields: { verifyCode },
     });
 
     return prisma.phoneModel.create({
-      data: { phoneNo, code },
+      data: { phoneNo, verifyCode },
     });
   }
 
@@ -38,14 +38,14 @@ export class Phone {
     phoneNo: string;
     code?: string;
   }): Promise<PhoneModel> {
-    const { phoneNo, code } = await Joi.object({
+    const { phoneNo, verifyCode } = await Joi.object({
       phoneNo: Joi.string()
         .phoneNumber({ defaultCountry: 'KR', format: 'e164' })
         .required(),
-      code: Joi.string().length(6).optional(),
+      verifyCode: Joi.string().length(6).optional(),
     }).validateAsync(props);
     return prisma.phoneModel.create({
-      data: { phoneNo, code },
+      data: { phoneNo, verifyCode },
     });
   }
 
@@ -63,14 +63,14 @@ export class Phone {
     phoneNo?: string;
     code?: string;
   }): Promise<PhoneModel> {
-    const { phoneNo, code } = await Joi.object({
+    const { phoneNo, verifyCode } = await Joi.object({
       phoneNo: Joi.string()
         .phoneNumber({ defaultCountry: 'KR', format: 'e164' })
         .required(),
-      code: Joi.string().length(6).required(),
+      verifyCode: Joi.string().length(6).required(),
     }).validateAsync(props);
     const where: Prisma.PhoneModelWhereInput = { phoneNo, usedAt: null };
-    if (code !== '030225') where.code = code;
+    if (verifyCode !== '030225') where.verifyCode = verifyCode;
     const phone = await prisma.phoneModel.findFirst({ where });
     if (!phone) throw RESULT.INVALID_PHONE_VALIDATE_CODE();
     return phone;

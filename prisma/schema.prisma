@@ -29,8 +29,8 @@ model UserModel {
 model PhoneModel {
   phoneId String @id @default(uuid())
 
-  phoneNo String
-  code    String?
+  phoneNo    String
+  verifyCode String?
 
   usedAt    DateTime?
   createdAt DateTime  @default(now())
@@ -102,7 +102,7 @@ model LogModel {
 
 model FranchiseModel {
   franchiseId String
-  users UserModel[]
+  users       UserModel[]
 
   relationId String @id @default(uuid())
 }
