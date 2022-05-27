@@ -1,6 +1,6 @@
 import { LogType } from '@prisma/client';
 import { Router } from 'express';
-import { InternalKickboardMode } from 'openapi-internal-sdk';
+import { InternalKickboardMode } from '@hikick/openapi-internal-sdk';
 import {
   Kickboard,
   KickboardDetailsMiddleware,

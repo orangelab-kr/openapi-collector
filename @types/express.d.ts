@@ -1,6 +1,6 @@
 import { LogModel, UserModel } from '@prisma/client';
 import 'express';
-import { InternalKickboard } from 'openapi-internal-sdk';
+import { InternalKickboard } from '@hikick/openapi-internal-sdk';
 
 declare global {
   namespace Express {
