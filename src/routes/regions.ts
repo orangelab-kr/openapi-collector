@@ -12,13 +12,5 @@ export function getRegionsRouter(): Router {
     })
   );
 
-  router.get(
-    '/all',
-    Wrapper(async (req) => {
-      const regions = await Region.getAllRegions(req.query);
-      throw RESULT.SUCCESS({ details: { regions } });
-    })
-  );
-
   return router;
 }

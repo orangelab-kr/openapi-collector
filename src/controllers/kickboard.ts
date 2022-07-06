@@ -1,5 +1,5 @@
 import { FranchiseModel, UserModel } from '@prisma/client';
-import got from 'got';
+import axios from 'axios';
 import { InternalClient, Joi, RESULT } from '..';
 
 export interface KickboardDoc {
@@ -96,7 +96,7 @@ export class Kickboard {
     const { url } = await Joi.object({
       url: Joi.string().uri().required(),
     }).validateAsync(props);
-    const res = await got(url);
+    const res = await axios.get(url).then((r) => r.data);
     const { searchParams } = new URL(res.url);
     const kickboardCode = searchParams.get('code');
     if (!kickboardCode) throw RESULT.INVALID_KICKBOARD_URL();
