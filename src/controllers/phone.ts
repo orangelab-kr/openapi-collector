@@ -1,5 +1,5 @@
+import { Joi, RESULT, logger, prisma, sendMessageWithMessageGateway } from '..';
 import { PhoneModel, Prisma } from '@prisma/client';
-import { Joi, prisma, RESULT, sendMessageWithMessageGateway } from '..';
 
 export class Phone {
   public static async sendVerify(props: {
@@ -12,11 +12,17 @@ export class Phone {
     }).validateAsync(props);
     const verifyCode = Phone.generateRandomCode();
     await Phone.revokePhone(phoneNo);
-    await sendMessageWithMessageGateway({
-      name: 'collector_verify',
-      phone: phoneNo,
-      fields: { verifyCode },
-    });
+
+    try {
+      await sendMessageWithMessageGateway({
+        name: 'collector_verify',
+        phone: phoneNo,
+        fields: { verifyCode },
+      });
+    } catch (err: any) {
+      logger.error(err.name);
+      logger.error(err.message);
+    }
 
     return prisma.phoneModel.create({
       data: { phoneNo, verifyCode },
